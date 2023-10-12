@@ -14,13 +14,19 @@ type ChildName =
   | 'Дима'
   | 'Миша';
 
+interface CopiedChild {
+  name: ChildName;
+  generatedText: string;
+}
+
 const TextGenerator: React.FC = () => {
   const [copied, setCopied] = useState<boolean>(false);
   const [childName, setChildName] = useState<ChildName>('Дея');
   const [dynamicText, setDynamicText] = useState<string>('');
   const [completedText, setCompletedText] = useState<string>('');
   const [generatedText, setGeneratedText] = useState<string>('');
-  const [copiedChildren, setCopiedChildren] = useState<ChildName[]>([]);
+  const [copiedChildren, setCopiedChildren] = useState<CopiedChild[]>([]);
+  const [finalText, setFinalText] = useState<string>('');
 
   const getParentName = (name: ChildName): string => {
     switch (name) {
@@ -65,32 +71,33 @@ const TextGenerator: React.FC = () => {
 
   const generatedTextRef = useRef<HTMLParagraphElement>(null);
 
+  React.useEffect(() => {
+    if (copied) {
+      const textToCopy = generatedTextRef.current?.textContent || '';
+      const cleanedText = textToCopy.trim();
+      setCopiedChildren((prevCopiedChildren) => [
+        ...prevCopiedChildren,
+        { name: childName, generatedText: cleanedText },
+      ]);
+    }
+  }, [copied, childName]);
+
   const handleCopy = () => {
     const textToCopy = generatedTextRef.current?.textContent || '';
     const cleanedText = textToCopy.trim();
     navigator.clipboard.writeText(cleanedText).then(() => {
       setCopied(true);
-      setCopiedChildren((prevCopiedChildren) => {
-        const uniqueChildren = new Set(prevCopiedChildren);
-        uniqueChildren.add(childName);
-        return Array.from(uniqueChildren);
-      });
     });
   };
 
   const setCopiedClean = () => {
+    setFinalText('');
     setCopiedChildren([]);
-  };
-
-  const deleteName = (nameToRemove: ChildName) => {
-    setCopiedChildren((prevCopiedChildren) =>
-      prevCopiedChildren.filter((name) => name !== nameToRemove),
-    );
   };
 
   return (
     <div className="flex flex-col items-center mt-20 h-screen">
-      <div className="w-[500px] p-4 border rounded-lg shadow-lg bg-white">
+      <div className="w-[600px] p-4 border rounded-lg shadow-lg bg-white p-10">
         <div className="mb-4">
           <p className="text-lg font-semibold mb-5"> Имя Родителя: {getParentName(childName)}</p>
           <label htmlFor="childName" className="text-lg font-semibold">
@@ -154,13 +161,13 @@ const TextGenerator: React.FC = () => {
         {generatedText && (
           <div className="mt-4">
             <h2 className="text-xl font-semibold">Готовый текст:</h2>
-            <p className="mt-2" ref={generatedTextRef}>
+            <p className="mt-4" ref={generatedTextRef}>
               {generatedText}
             </p>
             <CopyToClipboard text={generatedTextRef.current?.textContent || ''} onCopy={handleCopy}>
               <button
                 onClick={handleCopy}
-                className={`py-2 px-2 mt-2 text-white ${
+                className={`mt-4  py-2 px-2 mt-2 text-white ${
                   copied ? 'bg-green-500' : 'bg-blue-500'
                 } border border-${copied ? 'green-600' : 'blue-600'} rounded-md hover:bg-${
                   copied ? 'green-600' : 'blue-600'
@@ -175,16 +182,14 @@ const TextGenerator: React.FC = () => {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Скопированные имена детей:</h2>
           <ul className="grid grid-cols-2 gap-4">
-            {copiedChildren.map((name, index) => (
+            {copiedChildren.map((child, index) => (
               <li
                 key={index}
                 className="p-2 text-lg bg-gray-100 rounded-md shadow hover:bg-yellow-600 hover:text-white hover:cursor-pointer"
                 onClick={() => {
-                  setCopiedChildren((prevCopiedChildren) =>
-                    prevCopiedChildren.filter((prevName) => prevName !== name),
-                  );
+                  setFinalText(child.generatedText);
                 }}>
-                {name}
+                {child.name}
               </li>
             ))}
           </ul>
@@ -195,6 +200,7 @@ const TextGenerator: React.FC = () => {
           </button>
         </div>
       )}
+      <p className="pb-5  text-xl">{finalText}</p>
     </div>
   );
 };
