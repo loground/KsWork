@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-const TextGenerator = () => {
-  const [copied, setCopied] = useState(false);
+type ChildName =
+  | 'Дея'
+  | 'Иван'
+  | 'Саша'
+  | 'Никита'
+  | 'Злата'
+  | 'Алиса'
+  | 'Агния'
+  | 'Кирилл'
+  | 'Ая'
+  | 'Дима'
+  | 'Миша';
 
-  const [childName, setChildName] = useState('Дея');
-  const [dynamicText, setDynamicText] = useState('');
-  const [completedText, setCompletedText] = useState('');
-  const [generatedText, setGeneratedText] = useState('');
+const TextGenerator: React.FC = () => {
+  const [copied, setCopied] = useState<boolean>(false);
+  const [childName, setChildName] = useState<ChildName>('Дея');
+  const [dynamicText, setDynamicText] = useState<string>('');
+  const [completedText, setCompletedText] = useState<string>('');
+  const [generatedText, setGeneratedText] = useState<string>('');
+  const [copiedChildren, setCopiedChildren] = useState<ChildName[]>([]);
 
-  const getParentName = (childName: String) => {
-    switch (childName) {
+  const getParentName = (name: ChildName): string => {
+    switch (name) {
       case 'Дея':
         return 'Владимир';
       case 'Иван':
@@ -29,6 +42,10 @@ const TextGenerator = () => {
         return 'Андрей';
       case 'Ая':
         return '...';
+      case 'Дима':
+        return 'Александра';
+      case 'Миша':
+        return 'Дарина';
       default:
         return '';
     }
@@ -46,12 +63,29 @@ const TextGenerator = () => {
     setCopied(false);
   };
 
-  const generatedTextRef = React.useRef<HTMLParagraphElement | null>(null);
+  const generatedTextRef = useRef<HTMLParagraphElement>(null);
 
   const handleCopy = () => {
     const textToCopy = generatedTextRef.current?.textContent || '';
     const cleanedText = textToCopy.trim();
-    navigator.clipboard.writeText(cleanedText).then(() => setCopied(true));
+    navigator.clipboard.writeText(cleanedText).then(() => {
+      setCopied(true);
+      setCopiedChildren((prevCopiedChildren) => {
+        const uniqueChildren = new Set(prevCopiedChildren);
+        uniqueChildren.add(childName);
+        return Array.from(uniqueChildren);
+      });
+    });
+  };
+
+  const setCopiedClean = () => {
+    setCopiedChildren([]);
+  };
+
+  const deleteName = (nameToRemove: ChildName) => {
+    setCopiedChildren((prevCopiedChildren) =>
+      prevCopiedChildren.filter((name) => name !== nameToRemove),
+    );
   };
 
   return (
@@ -67,18 +101,26 @@ const TextGenerator = () => {
             value={childName}
             onChange={(e) => {
               setCopied(false);
-              setChildName(e.target.value);
+              setChildName(e.target.value as ChildName);
             }}
             className="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
-            <option value="Дея">Дея</option>
-            <option value="Иван">Иван</option>
-            <option value="Саша">Саша</option>
-            <option value="Никита">Никита</option>
-            <option value="Злата">Злата</option>
-            <option value="Алиса">Алиса</option>
-            <option value="Агния">Агния</option>
-            <option value="Кирилл">Кирилл</option>
-            <option value="Ая">Ая</option>
+            {[
+              'Дея',
+              'Иван',
+              'Саша',
+              'Никита',
+              'Злата',
+              'Алиса',
+              'Агния',
+              'Кирилл',
+              'Ая',
+              'Дима',
+              'Миша',
+            ].map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
           </select>
         </div>
         <div className="mb-4">
@@ -117,11 +159,8 @@ const TextGenerator = () => {
             </p>
             <CopyToClipboard text={generatedTextRef.current?.textContent || ''} onCopy={handleCopy}>
               <button
-                onClick={() => {
-                  handleCopy;
-                  console.log(generatedTextRef.current?.textContent);
-                }}
-                className={`py-2 mt-2 text-white ${
+                onClick={handleCopy}
+                className={`py-2 px-2 mt-2 text-white ${
                   copied ? 'bg-green-500' : 'bg-blue-500'
                 } border border-${copied ? 'green-600' : 'blue-600'} rounded-md hover:bg-${
                   copied ? 'green-600' : 'blue-600'
@@ -132,6 +171,30 @@ const TextGenerator = () => {
           </div>
         )}
       </div>
+      {copiedChildren.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4">Скопированные имена детей:</h2>
+          <ul className="grid grid-cols-2 gap-4">
+            {copiedChildren.map((name, index) => (
+              <li
+                key={index}
+                className="p-2 text-lg bg-gray-100 rounded-md shadow hover:bg-yellow-600 hover:text-white hover:cursor-pointer"
+                onClick={() => {
+                  setCopiedChildren((prevCopiedChildren) =>
+                    prevCopiedChildren.filter((prevName) => prevName !== name),
+                  );
+                }}>
+                {name}
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={setCopiedClean}
+            className="w-full py-2 mt-4 mb-4 text-white bg-red-600 border border-white-600 rounded-md hover:bg-pink-600 focus:outline-none focus:ring focus:border-blue-300">
+            Очистить список
+          </button>
+        </div>
+      )}
     </div>
   );
 };
