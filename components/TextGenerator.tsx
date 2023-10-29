@@ -12,6 +12,7 @@ type ChildName =
   | 'Кирилл'
   | 'Ая'
   | 'Дима'
+  | 'Аскар'
   | 'Миша';
 
 interface CopiedChild {
@@ -32,16 +33,10 @@ const TextGenerator: React.FC = () => {
     switch (name) {
       case 'Дея':
         return 'Владимир';
-      case 'Иван':
-        return 'Елена';
-      case 'Саша':
-        return 'Мария';
       case 'Никита':
         return 'Анастасия';
       case 'Злата':
         return 'Ирина';
-      case 'Алиса':
-        return 'Ксения';
       case 'Агния':
         return 'Юлия';
       case 'Кирилл':
@@ -52,6 +47,10 @@ const TextGenerator: React.FC = () => {
         return 'Александра';
       case 'Миша':
         return 'Дарина';
+      case 'Аскар':
+        return 'Ренат';
+      case 'Алиса':
+        return 'Наталия';
       default:
         return '';
     }
