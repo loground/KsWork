@@ -159,6 +159,7 @@ const TextGenerator: React.FC = () => {
                 type="checkbox"
                 checked={showRussian}
                 onChange={() => setShowRussian(!showRussian)}
+                className="m-4 "
               />
               Русский язык
             </label>
@@ -174,7 +175,7 @@ const TextGenerator: React.FC = () => {
           <div>
             <label>
               <input
-                className="mt-5"
+                className="m-4"
                 type="checkbox"
                 checked={showMath}
                 onChange={() => setShowMath(!showMath)}
@@ -196,7 +197,7 @@ const TextGenerator: React.FC = () => {
                 type="checkbox"
                 checked={showReading}
                 onChange={() => setShowReading(!showReading)}
-                className="mt-5"
+                className="m-4"
               />
               Чтение
             </label>
@@ -212,7 +213,7 @@ const TextGenerator: React.FC = () => {
           <div>
             <label>
               <input
-                className="mt-5"
+                className="m-4"
                 type="checkbox"
                 checked={showWorld}
                 onChange={() => setShowWorld(!showWorld)}
