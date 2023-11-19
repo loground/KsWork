@@ -47,7 +47,7 @@ const TextGenerator: React.FC = () => {
       case 'Миша':
         return 'Дарина';
       case 'Аскар':
-        return 'Ренат';
+        return 'Анастасия';
       case 'Алиса':
         return 'Наталия';
       case 'Вера':
