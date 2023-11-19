@@ -29,6 +29,14 @@ const TextGenerator: React.FC = () => {
   const [generatedText, setGeneratedText] = useState<string>('');
   const [copiedChildren, setCopiedChildren] = useState<CopiedChild[]>([]);
   const [finalText, setFinalText] = useState<string>('');
+  const [russianLanguage, setRussianLanguage] = useState<string>('');
+  const [mathematics, setMathematics] = useState<string>('');
+  const [reading, setReading] = useState<string>('');
+  const [worldAround, setWorldAround] = useState<string>('');
+  const [showRussian, setShowRussian] = useState<boolean>(false);
+  const [showMath, setShowMath] = useState<boolean>(false);
+  const [showReading, setShowReading] = useState<boolean>(false);
+  const [showWorld, setShowWorld] = useState<boolean>(false);
 
   const getParentName = (name: ChildName): string => {
     switch (name) {
@@ -59,11 +67,14 @@ const TextGenerator: React.FC = () => {
 
   const generateText = () => {
     const parentNameToShow = getParentName(childName);
-    const greeting = `${parentNameToShow}, здравствуйте! Я к вам с еженедельным отчётом!`;
+    const greeting = `${parentNameToShow}, здравствуйте!`;
     const thisWeek = `На этой неделе ${childName}`;
-    const weCompleted = ` Мы проходили: ${completedText}`;
+    let fullText = `${greeting}\n${thisWeek}\n${dynamicText}. На уроках мы проходили: `;
 
-    const fullText = `${greeting}\n${thisWeek}\n${dynamicText}.\n${weCompleted}.`;
+    if (showRussian) fullText += `\nРусский язык: ${russianLanguage}.`;
+    if (showMath) fullText += `\nМатематика: ${mathematics}.`;
+    if (showReading) fullText += `\nЧтение: ${reading}.`;
+    if (showWorld) fullText += `\nОкружающий мир: ${worldAround}.`;
 
     setGeneratedText(fullText);
     setCopied(false);
@@ -140,16 +151,83 @@ const TextGenerator: React.FC = () => {
             onChange={(e) => setDynamicText(e.target.value)}
             className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
           />
-          <label htmlFor="completed" className="text-lg font-semibold">
-            Мы проходили:
-          </label>
-          <textarea
-            id="Мы проходили"
-            value={completedText}
-            placeholder="Сюда написать то, что мы проходили и не тратить на это много слов"
-            onChange={(e) => setCompletedText(e.target.value)}
-            className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
-          />
+        </div>
+        <div className="mb-4">
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={showRussian}
+                onChange={() => setShowRussian(!showRussian)}
+              />
+              Русский язык
+            </label>
+            {showRussian && (
+              <textarea
+                placeholder="Русский язык подробности"
+                value={russianLanguage}
+                onChange={(e) => setRussianLanguage(e.target.value)}
+                className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
+              />
+            )}
+          </div>
+          <div>
+            <label>
+              <input
+                className="mt-5"
+                type="checkbox"
+                checked={showMath}
+                onChange={() => setShowMath(!showMath)}
+              />
+              Математика
+            </label>
+            {showMath && (
+              <textarea
+                placeholder="Темы, которые проходили в уроках"
+                value={mathematics}
+                onChange={(e) => setMathematics(e.target.value)}
+                className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
+              />
+            )}
+          </div>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={showReading}
+                onChange={() => setShowReading(!showReading)}
+                className="mt-5"
+              />
+              Чтение
+            </label>
+            {showReading && (
+              <textarea
+                placeholder="Тема, которую проходили в уроках"
+                value={reading}
+                onChange={(e) => setReading(e.target.value)}
+                className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
+              />
+            )}
+          </div>
+          <div>
+            <label>
+              <input
+                className="mt-5"
+                type="checkbox"
+                checked={showWorld}
+                onChange={() => setShowWorld(!showWorld)}
+              />
+              Мир
+            </label>
+            {showWorld && (
+              <textarea
+                placeholder="Мир подробности"
+                value={worldAround}
+                onChange={(e) => setWorldAround(e.target.value)}
+                className="w-full p-2 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 h-40"
+              />
+            )}
+          </div>
         </div>
         <button
           onClick={generateText}
