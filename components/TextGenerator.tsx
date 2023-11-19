@@ -113,16 +113,15 @@ const TextGenerator: React.FC = () => {
             className="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
             {[
               'Дея',
-              'Иван',
-              'Саша',
               'Никита',
               'Злата',
               'Алиса',
               'Агния',
-              'Кирилл',
               'Ая',
               'Дима',
               'Миша',
+              'Аскар',
+              'Вера',
             ].map((name) => (
               <option key={name} value={name}>
                 {name}
