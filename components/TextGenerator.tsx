@@ -14,7 +14,8 @@ type ChildName =
   | 'Дима'
   | 'Аскар'
   | 'Миша'
-  | 'Вера';
+  | 'Вера'
+  | 'Адриан';
 
 interface CopiedChild {
   name: ChildName;
@@ -60,6 +61,8 @@ const TextGenerator: React.FC = () => {
         return 'Наталия';
       case 'Вера':
         return 'Алина';
+      case 'Адриан':
+        return '';
       default:
         return '';
     }
@@ -133,6 +136,7 @@ const TextGenerator: React.FC = () => {
               'Миша',
               'Аскар',
               'Вера',
+              'Адриан',
             ].map((name) => (
               <option key={name} value={name}>
                 {name}
